@@ -11,10 +11,23 @@ use ExtUtils::MakeMaker;
 
 $PACKAGE = 'Tie::Math';
 ($PACKAGE_FILE = $PACKAGE) =~ s|::|/|g;
-$LAST_API_CHANGE = 0;
+$LAST_API_CHANGE = '0.10';
+
+eval "require $PACKAGE";
+
+unless ($@) { # Make sure we did find the module.
+    print <<"CHANGE_WARN" if ${$PACKAGE.'::VERSION'} < $LAST_API_CHANGE;
+
+NOTE: There have been API changes between this version and any older
+than version $LAST_API_CHANGE!  Please read the Changes file if you
+are upgrading from a version older than $LAST_API_CHANGE.
+
+CHANGE_WARN
+}
+
 
 # Need lvalue routines.
-require 5.006;
+use 5.006;
 
 WriteMakefile(
     NAME            => $PACKAGE,

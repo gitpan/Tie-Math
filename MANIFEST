@@ -2,3 +2,6 @@ lib/Tie/Math.pm
 MANIFEST
 Makefile.PL
 t/Math.t
+examples/pascals_triangle
+README
+INSTALL

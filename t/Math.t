@@ -43,18 +43,47 @@ sub eqarray  {
 }
 
 # Change this to your # of ok() calls + 1
-BEGIN { $Total_tests = 6 }
+BEGIN { $Total_tests = 10 }
 
 my %fibo;
-tie %fibo, 'Tie::Math', sub { f(n) = f(n-1) + f(n-2) },
+tie %fibo, 'Tie::Math', sub { f(N) = f(N-1) + f(N-2) },
                                sub { f(0) = 1;  f(1) = 1; };
 
-ok( $fibo{0} == 1 and $fibo{1} == 1 );
-ok( $fibo{3} == 3 );
+ok( $fibo{0} == 1 and $fibo{1} == 1,    'fibo init' );
+ok( $fibo{3} == 3,                      'fibo recursive' );
 
 
-tie %exp, 'Tie::Math', sub { f(n) = n**2 };
+tie %exp, 'Tie::Math', sub { f(N) = N ** 2 };
 
-ok( $exp{9} == 81 );
+ok( $exp{9} == 81,                      'simple exponential' );
 ok( $exp{0} == 0  );
 ok( $exp{-2} == 4 );
+
+
+use Tie::Math qw(f X Y M A);
+
+my %multi_var;
+tie %multi_var, 'Tie::Math', sub { f(X,Y) = X + Y };
+
+ok( $multi_var{1,2} == 3,       'basic multi-variable' );
+
+
+my %force;
+tie %force, 'Tie::Math', sub { f(M,A) = M * A };
+
+ok( $force{10,10} == 100,       'force == mass * acceleration' );
+
+
+my %pascal;
+tie %pascal, 'Tie::Math', sub { 
+                              if( X <= Y and Y > 0 and X > 0 ) {
+                                  f(X,Y) = f(X-1,Y-1) + f(X,Y-1);
+                              }
+                              else {
+                                  f(X,Y) = 0;
+                              }
+                          },
+                          sub { f(1,1) = 1;  f(1,2) = 1;  f(2,2) = 1; };
+
+ok( $pascal{2,3} == 2,                "Pascal's Triangle" );
+ok( $pascal{3,5} == 6);
